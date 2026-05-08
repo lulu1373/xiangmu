@@ -1,0 +1,213 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --paper: #eef2f7;
+  --panel: rgba(255, 255, 255, 0.82);
+  --line: rgba(29, 29, 31, 0.1);
+  --moss: #0071e3;
+  --moss-dark: #1d1d1f;
+  --copper: #86868b;
+  --gold: #d0d5dd;
+  --danger: #b42318;
+  --blue: #0071e3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #eef2f7;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 50% -12%, rgba(255, 255, 255, 0.94), transparent 34%),
+    radial-gradient(circle at 88% 14%, rgba(214, 226, 246, 0.58), transparent 24%),
+    linear-gradient(180deg, #f7f9fc 0%, #eef2f7 52%, #e7edf5 100%);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-frame {
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+}
+
+.app-frame::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  opacity: 0.34;
+  background-image:
+    linear-gradient(rgba(29, 29, 31, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 29, 31, 0.028) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(180deg, #000, transparent 58%);
+}
+
+.app-frame::after {
+  content: none;
+}
+
+.shell {
+  width: min(1280px, calc(100vw - 32px));
+  margin: 0 auto;
+}
+
+.glass-panel {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: 0 20px 70px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(24px);
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  border-radius: 999px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.btn-primary {
+  color: #fff;
+  background: #1d1d1f;
+  box-shadow: 0 12px 30px rgba(29, 29, 31, 0.18);
+}
+
+.btn-secondary {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.74);
+  border-color: var(--line);
+}
+
+.btn-danger {
+  color: #fff8ef;
+  background: var(--danger);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-danger:hover {
+  transform: translateY(-1px);
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.78);
+  outline: none;
+}
+
+.input:focus {
+  border-color: rgba(0, 113, 227, 0.56);
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.12);
+}
+
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.status-待开始 {
+  background: #e8e8e2;
+  color: #5f665f;
+}
+
+.status-进行中 {
+  background: #d9e8f0;
+  color: #24506d;
+}
+
+.status-阻塞 {
+  background: #f0d8d4;
+  color: #8f2d24;
+}
+
+.status-待验收 {
+  background: #f2e3ba;
+  color: #765316;
+}
+
+.status-已完成 {
+  background: #dcebd7;
+  color: #315f49;
+}
+
+.page-enter {
+  animation: pageEnter 420ms ease both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 760px) {
+  .shell {
+    width: min(100vw - 20px, 1480px);
+  }
+}
