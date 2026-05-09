@@ -11,6 +11,48 @@ npm run dev
 
 首次访问会进入初始化页，创建管理员账号后即可使用。
 
+## 数据库
+
+默认仍可用本地 SQLite 跑开发环境：
+
+```bash
+TEAM_PROGRESS_DB_PATH=./data/team-progress.sqlite
+```
+
+线上推荐 MySQL：
+
+```bash
+TEAM_PROGRESS_DB_CLIENT=mysql
+TEAM_PROGRESS_DATABASE_URL=mysql://user:password@127.0.0.1:3306/team_progress_admin
+```
+
+也支持拆开的 MySQL 环境变量：
+
+```bash
+TEAM_PROGRESS_DB_CLIENT=mysql
+MYSQL_HOST=127.0.0.1
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=your_password
+MYSQL_DATABASE=team_progress_admin
+```
+
+应用启动后会自动建表。
+
+## SQLite 迁移到 MySQL
+
+如果你已经在本地 SQLite 里录入了项目和进度，先让应用在 MySQL 环境下启动一次建表，再执行：
+
+```bash
+npm run migrate:sqlite-to-mysql -- ./data/team-progress.sqlite
+```
+
+也可以用环境变量指定源文件：
+
+```bash
+SOURCE_SQLITE_PATH=./data/team-progress.sqlite npm run migrate:sqlite-to-mysql
+```
+
 ## 智能导入
 
 - `RIGHT_CODE_GPT_API_KEY`: Right Code 令牌，服务端优先读取这个环境变量。

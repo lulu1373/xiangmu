@@ -14,7 +14,7 @@ export default async function UsersPage() {
   return (
     <div className="app-frame">
       <AppHeader user={user} />
-      <MemberManager initialUsers={listUsers()} />
+      <MemberManager initialUsers={await listUsers()} />
     </div>
   );
 }

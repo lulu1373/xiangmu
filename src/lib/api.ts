@@ -28,6 +28,7 @@ export function handleApiError(error: unknown) {
     if (error.message.endsWith("_not_found")) return jsonError(error.message, 404);
     if (error.message === "setup_already_completed") return jsonError("setup_already_completed", 409);
     if (error.message.includes("UNIQUE constraint failed")) return jsonError("duplicate_record", 409);
+    if (error.message.includes("Duplicate entry")) return jsonError("duplicate_record", 409);
     if (error.message === "owner_not_found") return jsonError("owner_not_found", 400);
     if (error.message === "unsupported_document_type") return jsonError("unsupported_document_type", 400);
     if (error.message === "empty_document") return jsonError("empty_document", 400);

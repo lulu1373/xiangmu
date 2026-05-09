@@ -11,7 +11,7 @@ export async function GET(request: Request, context: Context) {
     const { projectId } = await context.params;
     const url = new URL(request.url);
     const filters = listQuerySchema.parse(Object.fromEntries(url.searchParams.entries()));
-    return jsonOk({ requirements: listRequirements(projectId, filters) });
+    return jsonOk({ requirements: await listRequirements(projectId, filters) });
   } catch (error) {
     return handleApiError(error);
   }
@@ -22,7 +22,7 @@ export async function POST(request: Request, context: Context) {
     const actor = await requireCurrentUser();
     const { projectId } = await context.params;
     const input = requirementInputSchema.parse(await parseJson(request));
-    const requirement = createRequirement(projectId, input, actor.id);
+    const requirement = await createRequirement(projectId, input, actor.id);
     return jsonOk({ requirement }, { status: 201 });
   } catch (error) {
     return handleApiError(error);

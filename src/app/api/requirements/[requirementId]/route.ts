@@ -9,7 +9,7 @@ export async function GET(_request: Request, context: Context) {
   try {
     await requireCurrentUser();
     const { requirementId } = await context.params;
-    const requirement = getRequirementById(requirementId);
+    const requirement = await getRequirementById(requirementId);
     if (!requirement) return jsonError("requirement_not_found", 404);
     return jsonOk({ requirement });
   } catch (error) {
@@ -22,7 +22,7 @@ export async function PATCH(request: Request, context: Context) {
     const actor = await requireCurrentUser();
     const { requirementId } = await context.params;
     const input = requirementInputSchema.parse(await parseJson(request));
-    const requirement = updateRequirement(requirementId, input, actor.id);
+    const requirement = await updateRequirement(requirementId, input, actor.id);
     if (!requirement) return jsonError("requirement_not_found", 404);
     return jsonOk({ requirement });
   } catch (error) {

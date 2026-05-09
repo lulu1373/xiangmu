@@ -7,14 +7,14 @@ import { hasUsers, listProjects, listUsers } from "@/lib/repository";
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
-  if (!hasUsers()) redirect("/setup");
+  if (!(await hasUsers())) redirect("/setup");
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
   return (
     <div className="app-frame">
       <AppHeader user={user} />
-      <ProjectDashboard initialProjects={listProjects()} users={listUsers()} />
+      <ProjectDashboard initialProjects={await listProjects()} users={await listUsers()} />
     </div>
   );
 }

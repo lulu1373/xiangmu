@@ -9,7 +9,7 @@ export async function GET(_request: Request, context: Context) {
   try {
     await requireCurrentUser();
     const { projectId } = await context.params;
-    const project = getProjectById(projectId);
+    const project = await getProjectById(projectId);
     if (!project) return jsonError("project_not_found", 404);
     return jsonOk({ project });
   } catch (error) {
@@ -22,7 +22,7 @@ export async function PATCH(request: Request, context: Context) {
     const actor = await requireCurrentUser();
     const { projectId } = await context.params;
     const input = projectInputSchema.parse(await parseJson(request));
-    const project = updateProject(projectId, input, actor.id);
+    const project = await updateProject(projectId, input, actor.id);
     if (!project) return jsonError("project_not_found", 404);
     return jsonOk({ project });
   } catch (error) {

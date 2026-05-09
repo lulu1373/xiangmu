@@ -14,7 +14,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   const { projectId } = await params;
-  const project = getProjectById(projectId);
+  const project = await getProjectById(projectId);
   if (!project) notFound();
 
   return (
@@ -22,8 +22,8 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       <AppHeader user={user} />
       <ProjectWorkspace
         project={project}
-        initialRequirements={listRequirements(project.id)}
-        users={listUsers()}
+        initialRequirements={await listRequirements(project.id)}
+        users={await listUsers()}
       />
     </div>
   );

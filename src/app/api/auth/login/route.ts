@@ -6,7 +6,9 @@ import { loginSchema } from "@/lib/schemas";
 export async function POST(request: Request) {
   try {
     const input = loginSchema.parse(await parseJson(request));
-    const user = input.loginCode ? getUserByLoginCode(input.loginCode) : getUserByEmail(input.email ?? "");
+    const user = input.loginCode
+      ? await getUserByLoginCode(input.loginCode)
+      : await getUserByEmail(input.email ?? "");
     if (!user) return jsonError("invalid_credentials", 401);
     const valid = await verifyPassword(input.password, user.passwordHash);
     if (!valid) return jsonError("invalid_credentials", 401);

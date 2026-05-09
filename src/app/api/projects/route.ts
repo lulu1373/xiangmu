@@ -6,7 +6,7 @@ import { projectInputSchema } from "@/lib/schemas";
 export async function GET() {
   try {
     await requireCurrentUser();
-    return jsonOk({ projects: listProjects() });
+    return jsonOk({ projects: await listProjects() });
   } catch (error) {
     return handleApiError(error);
   }
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   try {
     const actor = await requireCurrentUser();
     const input = projectInputSchema.parse(await parseJson(request));
-    const project = createProject({ ...input, actorId: actor.id });
+    const project = await createProject({ ...input, actorId: actor.id });
     return jsonOk({ project }, { status: 201 });
   } catch (error) {
     return handleApiError(error);

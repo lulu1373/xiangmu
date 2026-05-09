@@ -6,7 +6,7 @@ import { userInputSchema } from "@/lib/schemas";
 export async function GET() {
   try {
     await requireCurrentUser();
-    return jsonOk({ users: listUsers() });
+    return jsonOk({ users: await listUsers() });
   } catch (error) {
     return handleApiError(error);
   }

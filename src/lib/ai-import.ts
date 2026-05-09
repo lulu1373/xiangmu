@@ -453,11 +453,11 @@ export async function importTasksFromDocuments(input: {
   bookName?: string;
   rightCodeToken?: string;
 }) {
-  const project = getProjectById(input.projectId);
+  const project = await getProjectById(input.projectId);
   if (!project) throw new Error("project_not_found");
 
-  const users = listUsers();
-  const existingRequirements = listRequirements(input.projectId);
+  const users = await listUsers();
+  const existingRequirements = await listRequirements(input.projectId);
   const summaries: string[] = [];
   const rows: ImportPreviewRow[] = [];
 
@@ -476,7 +476,7 @@ export async function importTasksFromDocuments(input: {
     rows.push(...parsed.rows);
   }
 
-  const result: ImportResult = applyImportRows(input.projectId, rows, input.actor.id, {
+  const result: ImportResult = await applyImportRows(input.projectId, rows, input.actor.id, {
     fileName: clipText(input.files.map((file) => file.fileName).join("、"), 200),
     fileType: "ai_document",
   });

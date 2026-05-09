@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     if (parsed.errors.length > 0) {
       return jsonOk({ result: { success: false, created: 0, updated: 0, errors: parsed.errors } });
     }
-    const result = applyImportRows(projectId, parsed.normalizedRows, actor.id, {
+    const result = await applyImportRows(projectId, parsed.normalizedRows, actor.id, {
       fileName: file.name,
       fileType: lowerName.endsWith(".csv") ? "csv" : "xlsx",
     });

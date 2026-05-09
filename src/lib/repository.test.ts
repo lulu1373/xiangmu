@@ -27,7 +27,7 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  closeDbForTests();
+  await closeDbForTests();
   delete process.env.TEAM_PROGRESS_DB_PATH;
   await rm(tempDir, { recursive: true, force: true });
 });
@@ -40,9 +40,9 @@ describe("repository", () => {
       password: "StrongPass123",
     });
 
-    const stored = getUserByEmail("lead@example.com");
-    const storedByLoginCode = getUserByLoginCode("ADMIN1");
-    const projects = listProjects();
+    const stored = await getUserByEmail("lead@example.com");
+    const storedByLoginCode = await getUserByLoginCode("ADMIN1");
+    const projects = await listProjects();
 
     expect(admin.permission).toBe("admin");
     expect(admin.loginCode).toBe("ADMIN1");
@@ -71,8 +71,8 @@ describe("repository", () => {
       role: "技术",
       permission: "member",
     });
-    const project = listProjects()[0];
-    const requirement = createRequirement(
+    const project = (await listProjects())[0];
+    const requirement = await createRequirement(
       project.id,
       {
         title: "完成需求表 MVP",
@@ -99,8 +99,8 @@ describe("repository", () => {
 
     expect(requirement?.code).toBe("REQ-0001");
 
-    const statusResult = updateRequirementStatus(requirement!.id, "进行中", engineer.id);
-    addProgressUpdate(
+    const statusResult = await updateRequirementStatus(requirement!.id, "进行中", engineer.id);
+    await addProgressUpdate(
       requirement!.id,
       {
         progress: "已完成表格和看板主流程。",
@@ -111,9 +111,9 @@ describe("repository", () => {
       engineer.id,
     );
 
-    const stored = listRequirements(project.id)[0];
-    const filtered = listRequirements(project.id, { bookName: "亲子关系全面技巧" });
-    const updates = listProgressUpdates(requirement!.id);
+    const stored = (await listRequirements(project.id))[0];
+    const filtered = await listRequirements(project.id, { bookName: "亲子关系全面技巧" });
+    const updates = await listProgressUpdates(requirement!.id);
 
     expect(statusResult?.status).toBe("进行中");
     expect(stored.status).toBe("待验收");
@@ -131,7 +131,7 @@ describe("repository", () => {
       password: "StrongPass123",
     });
 
-    const project = createProject({
+    const project = await createProject({
       actorId: admin.id,
       name: "新项目总览测试",
       projectType: "其他",

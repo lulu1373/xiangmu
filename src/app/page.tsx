@@ -5,7 +5,7 @@ import { hasUsers } from "@/lib/repository";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  if (!hasUsers()) redirect("/setup");
+  if (!(await hasUsers())) redirect("/setup");
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   redirect("/projects");

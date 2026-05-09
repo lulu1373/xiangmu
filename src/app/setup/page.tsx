@@ -4,8 +4,8 @@ import { hasUsers } from "@/lib/repository";
 
 export const dynamic = "force-dynamic";
 
-export default function SetupPage() {
-  if (hasUsers()) redirect("/login");
+export default async function SetupPage() {
+  if (await hasUsers()) redirect("/login");
 
   return (
     <main className="app-frame grid min-h-screen place-items-center px-4 py-10">

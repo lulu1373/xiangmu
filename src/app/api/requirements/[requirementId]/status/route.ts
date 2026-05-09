@@ -10,7 +10,7 @@ export async function PATCH(request: Request, context: Context) {
     const actor = await requireCurrentUser();
     const { requirementId } = await context.params;
     const input = statusInputSchema.parse(await parseJson(request));
-    const requirement = updateRequirementStatus(requirementId, input.status, actor.id);
+    const requirement = await updateRequirementStatus(requirementId, input.status, actor.id);
     if (!requirement) return jsonError("requirement_not_found", 404);
     return jsonOk({ requirement });
   } catch (error) {

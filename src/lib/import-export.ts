@@ -10,17 +10,16 @@ import {
   type RequirementType,
   type TeamRole,
 } from "@/lib/constants";
-import { getDb } from "@/lib/db";
+import { withTransaction } from "@/lib/db";
 import {
   createRequirement,
   findUserByName,
   getProjectById,
   getRequirementByProjectAndCode,
-  listRequirements,
   recordImportBatch,
   updateRequirement,
 } from "@/lib/repository";
-import type { ImportErrorDetail, ImportPreviewRow, ImportResult } from "@/lib/types";
+import type { ImportErrorDetail, ImportPreviewRow, ImportResult, Requirement } from "@/lib/types";
 
 type RawRow = Record<string, unknown>;
 
@@ -150,7 +149,7 @@ export function buildImportTemplate() {
   return workbook;
 }
 
-export function exportRequirementsWorkbook(requirements: ReturnType<typeof listRequirements>) {
+export function exportRequirementsWorkbook(requirements: Requirement[]) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("requirements");
   worksheet.columns = IMPORT_HEADERS.map((header) => ({ header, key: header, width: 18 }));
@@ -276,13 +275,13 @@ export async function parseImportFile(buffer: Buffer, fileName: string) {
   return validateImportRows(rows);
 }
 
-export function applyImportRows(
+export async function applyImportRows(
   projectId: string,
   rows: ImportPreviewRow[],
   actorId: string,
   meta?: { fileName?: string; fileType?: string },
-): ImportResult {
-  const existingProject = getProjectById(projectId);
+): Promise<ImportResult> {
+  const existingProject = await getProjectById(projectId);
   if (!existingProject) {
     throw new Error("project_not_found");
   }
@@ -298,7 +297,7 @@ export function applyImportRows(
 
   for (const [index, row] of rows.entries()) {
     const rowNumber = index + 2;
-    const owner = findUserByName(row.ownerName);
+    const owner = await findUserByName(row.ownerName);
     if (!owner) {
       errors.push({ row: rowNumber, field: "负责人", message: `未找到成员：${row.ownerName}` });
       continue;
@@ -317,7 +316,7 @@ export function applyImportRows(
       seenCodes.add(codeKey);
     }
 
-    const existing = row.code ? getRequirementByProjectAndCode(projectId, row.code) : null;
+    const existing = row.code ? await getRequirementByProjectAndCode(projectId, row.code) : null;
     const payload = {
       code: row.code || undefined,
       title: row.title,
@@ -344,18 +343,17 @@ export function applyImportRows(
   }
 
   if (errors.length === 0) {
-    const transaction = getDb().transaction(() => {
+    await withTransaction(async (tx) => {
       for (const operation of operations) {
         if (operation.existingId) {
-          updateRequirement(operation.existingId, operation.payload, actorId);
+          await updateRequirement(operation.existingId, operation.payload, actorId, tx);
           updated += 1;
         } else {
-          createRequirement(projectId, operation.payload, actorId);
+          await createRequirement(projectId, operation.payload, actorId, tx);
           created += 1;
         }
       }
     });
-    transaction();
   }
 
   const result = {
@@ -365,7 +363,7 @@ export function applyImportRows(
     errors,
   };
 
-  recordImportBatch({
+  await recordImportBatch({
     projectId,
     userId: actorId,
     fileName: meta?.fileName ?? existingProject.name,

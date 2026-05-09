@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const format = url.searchParams.get("format") === "csv" ? "csv" : "xlsx";
     if (!projectId) return jsonError("project_required", 400);
     const filters = listQuerySchema.parse(Object.fromEntries(url.searchParams.entries()));
-    const workbook = exportRequirementsWorkbook(listRequirements(projectId, filters));
+    const workbook = exportRequirementsWorkbook(await listRequirements(projectId, filters));
     const buffer = await exportWorkbookToBuffer(workbook, format);
     return new Response(buffer, {
       headers: {

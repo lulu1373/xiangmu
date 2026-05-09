@@ -4,7 +4,7 @@ import { createInitialAdmin, hasUsers } from "@/lib/repository";
 import { setupSchema } from "@/lib/schemas";
 
 export async function GET() {
-  return jsonOk({ needsSetup: !hasUsers() });
+  return jsonOk({ needsSetup: !(await hasUsers()) });
 }
 
 export async function POST(request: Request) {

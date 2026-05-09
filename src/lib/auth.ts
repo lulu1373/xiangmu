@@ -14,7 +14,7 @@ export const SESSION_COOKIE = "team_progress_session";
 export async function getCurrentUser(): Promise<User | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
-  const user = getUserBySessionToken(token);
+  const user = await getUserBySessionToken(token);
   return user ? publicUser(user) : null;
 }
 
@@ -31,7 +31,7 @@ export async function requireAdminUser() {
 }
 
 export async function createLoginResponse(userId: string) {
-  const session = createSession(userId);
+  const session = await createSession(userId);
   const response = NextResponse.json({ success: true });
   response.cookies.set(SESSION_COOKIE, session.token, {
     httpOnly: true,
@@ -46,7 +46,7 @@ export async function createLoginResponse(userId: string) {
 export async function clearSessionResponse() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
-  if (token) deleteSession(token);
+  if (token) await deleteSession(token);
   const response = NextResponse.json({ success: true });
   response.cookies.set(SESSION_COOKIE, "", {
     httpOnly: true,
