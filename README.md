@@ -46,6 +46,34 @@ npm run migrate:sqlite-to-mysql -- ./data/team-progress.sqlite
 SOURCE_SQLITE_PATH=./data/team-progress.sqlite npm run migrate:sqlite-to-mysql
 ```
 
+## Docker 部署
+
+这个项目已经补了 `Dockerfile`，同事可以直接在项目根目录构建镜像：
+
+```bash
+docker build -t team-progress-admin:latest .
+```
+
+运行时至少要传 MySQL 连接：
+
+```bash
+docker run -d \
+  --name team-progress-admin \
+  -p 3001:3001 \
+  -e TEAM_PROGRESS_DATABASE_URL='mysql://root:password@120.77.254.76:3306/project_management' \
+  team-progress-admin:latest
+```
+
+如果要启用 AI 自动导入，再补这些环境变量：
+
+```bash
+-e RIGHT_CODE_GPT_API_KEY='your_token' \
+-e RIGHT_CODE_GPT_BASE_URL='https://www.right.codes/codex/v1' \
+-e RIGHT_CODE_GPT_MODEL='gpt-5.2'
+```
+
+容器启动后默认监听 `3001` 端口。
+
 ## 智能导入
 
 - `RIGHT_CODE_GPT_API_KEY`: Right Code 令牌，服务端优先读取这个环境变量。

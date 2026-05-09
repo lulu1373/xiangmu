@@ -8,3 +8,4 @@ data/*.sqlite-*
 .env.local
 coverage
 npm-debug.log*
+backups
