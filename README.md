@@ -6,6 +6,7 @@
 
 ```bash
 npm install
+TEAM_PROGRESS_DATABASE_URL=mysql://user:password@127.0.0.1:3306/team_progress_admin
 npm run dev
 ```
 
@@ -13,23 +14,15 @@ npm run dev
 
 ## 数据库
 
-默认仍可用本地 SQLite 跑开发环境：
+项目运行时已强制使用 MySQL：
 
 ```bash
-TEAM_PROGRESS_DB_PATH=./data/team-progress.sqlite
-```
-
-线上推荐 MySQL：
-
-```bash
-TEAM_PROGRESS_DB_CLIENT=mysql
 TEAM_PROGRESS_DATABASE_URL=mysql://user:password@127.0.0.1:3306/team_progress_admin
 ```
 
 也支持拆开的 MySQL 环境变量：
 
 ```bash
-TEAM_PROGRESS_DB_CLIENT=mysql
 MYSQL_HOST=127.0.0.1
 MYSQL_PORT=3306
 MYSQL_USER=root
@@ -41,7 +34,7 @@ MYSQL_DATABASE=team_progress_admin
 
 ## SQLite 迁移到 MySQL
 
-如果你已经在本地 SQLite 里录入了项目和进度，先让应用在 MySQL 环境下启动一次建表，再执行：
+如果你之前已经在 SQLite 里录入了项目和进度，先让应用在 MySQL 环境下启动一次建表，再执行：
 
 ```bash
 npm run migrate:sqlite-to-mysql -- ./data/team-progress.sqlite
@@ -65,6 +58,6 @@ SOURCE_SQLITE_PATH=./data/team-progress.sqlite npm run migrate:sqlite-to-mysql
 
 ```bash
 npm run lint
-npm test
+TEAM_PROGRESS_TEST_DATABASE_URL=mysql://user:password@127.0.0.1:3306/team_progress_test npm test
 npm run build
 ```

@@ -1,25 +1,30 @@
-import { mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { closeDbForTests } from "@/lib/db";
 import { applyImportRows, exportRequirementsWorkbook, exportWorkbookToBuffer, parseImportFile } from "@/lib/import-export";
+import { createMysqlTestDatabaseUrl, dropMysqlTestDatabase, hasMysqlTestDatabaseConfig } from "@/lib/mysql-test-env";
 import { createInitialAdmin, createUser, listProjects, listRequirements } from "@/lib/repository";
 
-let tempDir = "";
+const describeMysql = hasMysqlTestDatabaseConfig() ? describe : describe.skip;
+let databaseUrl = "";
 
 beforeEach(async () => {
-  tempDir = await mkdtemp(join(tmpdir(), "team-progress-import-test-"));
-  process.env.TEAM_PROGRESS_DB_PATH = join(tempDir, "test.sqlite");
+  const testDatabase = createMysqlTestDatabaseUrl("import_test");
+  databaseUrl = testDatabase.databaseUrl;
+  process.env.TEAM_PROGRESS_DB_CLIENT = "mysql";
+  process.env.TEAM_PROGRESS_DATABASE_URL = databaseUrl;
 });
 
 afterEach(async () => {
   await closeDbForTests();
-  delete process.env.TEAM_PROGRESS_DB_PATH;
-  await rm(tempDir, { recursive: true, force: true });
+  delete process.env.TEAM_PROGRESS_DB_CLIENT;
+  delete process.env.TEAM_PROGRESS_DATABASE_URL;
+  if (databaseUrl) {
+    await dropMysqlTestDatabase(databaseUrl);
+    databaseUrl = "";
+  }
 });
 
-describe("import/export", () => {
+describeMysql("import/export", () => {
   it("imports valid CSV rows and exports an xlsx workbook", async () => {
     const admin = await createInitialAdmin({
       name: "管理员",

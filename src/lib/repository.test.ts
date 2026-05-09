@@ -1,9 +1,7 @@
-import { mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { DEFAULT_PROJECTS, PROJECT_TRACKS } from "@/lib/constants";
 import { closeDbForTests } from "@/lib/db";
+import { createMysqlTestDatabaseUrl, dropMysqlTestDatabase, hasMysqlTestDatabaseConfig } from "@/lib/mysql-test-env";
 import {
   addProgressUpdate,
   createInitialAdmin,
@@ -19,20 +17,27 @@ import {
   verifyPassword,
 } from "@/lib/repository";
 
-let tempDir = "";
+const describeMysql = hasMysqlTestDatabaseConfig() ? describe : describe.skip;
+let databaseUrl = "";
 
 beforeEach(async () => {
-  tempDir = await mkdtemp(join(tmpdir(), "team-progress-test-"));
-  process.env.TEAM_PROGRESS_DB_PATH = join(tempDir, "test.sqlite");
+  const testDatabase = createMysqlTestDatabaseUrl("repo_test");
+  databaseUrl = testDatabase.databaseUrl;
+  process.env.TEAM_PROGRESS_DB_CLIENT = "mysql";
+  process.env.TEAM_PROGRESS_DATABASE_URL = databaseUrl;
 });
 
 afterEach(async () => {
   await closeDbForTests();
-  delete process.env.TEAM_PROGRESS_DB_PATH;
-  await rm(tempDir, { recursive: true, force: true });
+  delete process.env.TEAM_PROGRESS_DB_CLIENT;
+  delete process.env.TEAM_PROGRESS_DATABASE_URL;
+  if (databaseUrl) {
+    await dropMysqlTestDatabase(databaseUrl);
+    databaseUrl = "";
+  }
 });
 
-describe("repository", () => {
+describeMysql("repository", () => {
   it("creates the initial admin and the five default projects", async () => {
     const admin = await createInitialAdmin({
       name: "负责人",
