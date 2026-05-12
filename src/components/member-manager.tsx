@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { TEAM_ROLES, USER_PERMISSIONS } from "@/lib/constants";
+import { apiPath } from "@/lib/paths";
 import type { User } from "@/lib/types";
 
 export function MemberManager({ initialUsers }: { initialUsers: User[] }) {
@@ -12,7 +13,7 @@ export function MemberManager({ initialUsers }: { initialUsers: User[] }) {
     event.preventDefault();
     setMessage("");
     const form = new FormData(event.currentTarget);
-    const response = await fetch("/api/users", {
+    const response = await fetch(apiPath("/api/users"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

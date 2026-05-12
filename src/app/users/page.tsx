@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export default async function UsersPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  if (user.permission !== "admin") redirect("/projects");
+  if (user.permission !== "admin") redirect("/");
 
   return (
     <div className="app-frame">

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function LoginPage() {
   if (!(await hasUsers())) redirect("/setup");
   const user = await getCurrentUser();
-  if (user) redirect("/projects");
+  if (user) redirect("/");
 
   return (
     <main className="app-frame grid min-h-screen place-items-center px-4 py-10">

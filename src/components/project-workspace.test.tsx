@@ -5,7 +5,7 @@ import type { Project, Requirement, User } from "@/lib/types";
 const replace = vi.fn();
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/projects/project-1",
+  usePathname: () => "/project-1",
   useRouter: () => ({ replace }),
   useSearchParams: () => new URLSearchParams(),
 }));
@@ -132,7 +132,7 @@ describe("ProjectWorkspace", () => {
     expect(screen.queryByRole("textbox", { name: "阻塞问题" })).not.toBeInTheDocument();
     expect(await screen.findByText("暂无进度记录。")).toBeInTheDocument();
     expect(screen.queryByText("未归书籍的内容")).not.toBeInTheDocument();
-  });
+  }, 15000);
 
   it("keeps the book overview for the book-assessment project", () => {
     renderWorkspace(

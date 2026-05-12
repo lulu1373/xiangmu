@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { apiPath } from "@/lib/paths";
 
 type AuthFormProps = {
   mode: "setup" | "login";
@@ -29,7 +30,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             password: String(form.get("password") ?? ""),
           };
 
-    const response = await fetch(mode === "setup" ? "/api/setup" : "/api/auth/login", {
+    const response = await fetch(apiPath(mode === "setup" ? "/api/setup" : "/api/auth/login"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -42,7 +43,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       return;
     }
 
-    router.push("/projects");
+    router.push("/");
     router.refresh();
   }
 

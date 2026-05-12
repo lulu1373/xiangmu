@@ -27,6 +27,7 @@ import {
   TEAM_ROLES,
   type RequirementStatus,
 } from "@/lib/constants";
+import { apiPath } from "@/lib/paths";
 import type { ProgressUpdate, Project, Requirement, User } from "@/lib/types";
 
 type ViewMode = "table" | "kanban";
@@ -171,7 +172,7 @@ export function ProjectWorkspace({
   const uncategorizedCount = requirements.filter((item) => !item.bookName).length;
 
   async function reloadRequirements() {
-    const response = await fetch(`/api/projects/${projectState.id}/requirements`);
+    const response = await fetch(apiPath(`/api/projects/${projectState.id}/requirements`));
     const data = await response.json().catch(() => null);
     if (response.ok && data?.success) {
       setRequirements(data.data.requirements);
@@ -197,7 +198,7 @@ export function ProjectWorkspace({
       return;
     }
     let cancelled = false;
-    fetch(`/api/requirements/${selected.id}/progress`)
+    fetch(apiPath(`/api/requirements/${selected.id}/progress`))
       .then((response) => response.json())
       .then((data) => {
         if (!cancelled && data.success) setProgressUpdates(data.data.progressUpdates);
@@ -238,7 +239,7 @@ export function ProjectWorkspace({
       blocker,
     };
 
-    const target = editing ? `/api/requirements/${editing.id}` : `/api/projects/${projectState.id}/requirements`;
+    const target = editing ? apiPath(`/api/requirements/${editing.id}`) : apiPath(`/api/projects/${projectState.id}/requirements`);
     const response = await fetch(target, {
       method: editing ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
@@ -262,7 +263,7 @@ export function ProjectWorkspace({
   }
 
   async function updateStatus(requirementId: string, status: RequirementStatus) {
-    const response = await fetch(`/api/requirements/${requirementId}/status`, {
+    const response = await fetch(apiPath(`/api/requirements/${requirementId}/status`), {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
@@ -298,7 +299,7 @@ export function ProjectWorkspace({
       blocker,
       status: selected.status,
     };
-    const response = await fetch(`/api/requirements/${selected.id}/progress`, {
+    const response = await fetch(apiPath(`/api/requirements/${selected.id}/progress`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -332,7 +333,7 @@ export function ProjectWorkspace({
     setMessage("");
     const form = new FormData(event.currentTarget);
     form.set("projectId", projectState.id);
-    const response = await fetch("/api/import", { method: "POST", body: form });
+    const response = await fetch(apiPath("/api/import"), { method: "POST", body: form });
     const data = await response.json().catch(() => null);
     if (!response.ok) {
       setMessage("导入失败，请确认文件格式为 CSV 或 xlsx。");
@@ -356,7 +357,7 @@ export function ProjectWorkspace({
     setAiMessage("");
     const form = new FormData(event.currentTarget);
     form.set("projectId", projectState.id);
-    const response = await fetch("/api/import/ai", { method: "POST", body: form });
+    const response = await fetch(apiPath("/api/import/ai"), { method: "POST", body: form });
     const data = await response.json().catch(() => null);
     if (!response.ok) {
       setAiMessage(
@@ -436,7 +437,7 @@ export function ProjectWorkspace({
       note: String(form.get("note") ?? ""),
       trackSummaries,
     };
-    const response = await fetch(`/api/projects/${projectState.id}`, {
+    const response = await fetch(apiPath(`/api/projects/${projectState.id}`), {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -546,10 +547,10 @@ export function ProjectWorkspace({
                   <button className="btn-primary">筛选</button>
                 </form>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <a className="btn-secondary" href={`/api/export?${exportQuery.toString()}&format=xlsx`}>
+                  <a className="btn-secondary" href={apiPath(`/api/export?${exportQuery.toString()}&format=xlsx`)}>
                     <Download size={16} /> 导出 xlsx
                   </a>
-                  <a className="btn-secondary" href={`/api/export?${exportQuery.toString()}&format=csv`}>
+                  <a className="btn-secondary" href={apiPath(`/api/export?${exportQuery.toString()}&format=csv`)}>
                     <Download size={16} /> 导出 CSV
                   </a>
                 </div>

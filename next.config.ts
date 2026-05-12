@@ -20,6 +20,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  basePath: "/projects",
   output: "standalone",
   async headers() {
     return [

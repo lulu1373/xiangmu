@@ -3,19 +3,20 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { User } from "@/lib/types";
+import { apiPath } from "@/lib/paths";
 
 export function AppHeader({ user }: { user: User }) {
   const router = useRouter();
 
   async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch(apiPath("/api/auth/logout"), { method: "POST" });
     router.push("/login");
     router.refresh();
   }
 
   return (
     <header className="shell flex items-center justify-between py-5">
-      <Link href="/projects" className="group flex items-center gap-3">
+      <Link href="/" className="group flex items-center gap-3">
         <span className="grid size-10 place-items-center rounded-2xl bg-[#1d1d1f] text-sm font-semibold text-white shadow-[0_12px_30px_rgba(29,29,31,0.16)]">
           T
         </span>
@@ -25,7 +26,7 @@ export function AppHeader({ user }: { user: User }) {
         </span>
       </Link>
       <nav className="flex items-center gap-2">
-        <Link href="/projects" className="btn-secondary hidden sm:inline-flex">
+        <Link href="/" className="btn-secondary hidden sm:inline-flex">
           项目
         </Link>
         {user.permission === "admin" ? (

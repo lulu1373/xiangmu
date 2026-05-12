@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PROJECT_SUMMARY_STATUSES, PROJECT_TYPES, PROJECT_TRACKS } from "@/lib/constants";
+import { apiPath } from "@/lib/paths";
 import type { Project, User } from "@/lib/types";
 
 function formatDate(value: string | null) {
@@ -57,7 +58,7 @@ export function ProjectDashboard({
     setCreating(true);
     setError("");
     const form = new FormData(event.currentTarget);
-    const response = await fetch("/api/projects", {
+    const response = await fetch(apiPath("/api/projects"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -138,7 +139,7 @@ export function ProjectDashboard({
               {attentionProjects.map((project) => (
                 <Link
                   key={project.id}
-                  href={`/projects/${project.id}`}
+                  href={`/${project.id}`}
                   className="grid gap-2 rounded-[16px] bg-[#f5f5f7] px-3 py-2.5 transition hover:bg-[#eceff3] md:grid-cols-[1fr_auto]"
                 >
                   <div className="min-w-0">
@@ -369,7 +370,7 @@ function ProjectRow({ project }: { project: Project }) {
       </div>
 
       <Link
-        href={`/projects/${project.id}`}
+        href={`/${project.id}`}
         className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1d1d1f] px-3 py-2 text-sm font-semibold text-white transition hover:bg-black"
       >
         进入 <ArrowRight size={15} />
