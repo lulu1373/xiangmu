@@ -62,8 +62,11 @@ docker run -d \
   --name team-progress-admin \
   -p 3001:3001 \
   -e TEAM_PROGRESS_DATABASE_URL='mysql://root:password@120.77.254.76:3306/project_management' \
+  -e SESSION_COOKIE_SECURE='false' \
   team-progress-admin:latest
 ```
+
+如果后面切到 HTTPS 域名，把 `SESSION_COOKIE_SECURE` 改成 `true`。
 
 如果要启用 AI 自动导入，再补这些环境变量：
 

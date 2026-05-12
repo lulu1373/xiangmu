@@ -11,6 +11,10 @@ import type { User } from "@/lib/types";
 
 export const SESSION_COOKIE = "team_progress_session";
 
+function shouldUseSecureCookie() {
+  return process.env.SESSION_COOKIE_SECURE === "true";
+}
+
 export async function getCurrentUser(): Promise<User | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
@@ -36,7 +40,7 @@ export async function createLoginResponse(userId: string) {
   response.cookies.set(SESSION_COOKIE, session.token, {
     httpOnly: true,
     sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookie(),
     path: "/",
     expires: new Date(session.expiresAt),
   });
@@ -51,7 +55,7 @@ export async function clearSessionResponse() {
   response.cookies.set(SESSION_COOKIE, "", {
     httpOnly: true,
     sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookie(),
     path: "/",
     maxAge: 0,
   });
