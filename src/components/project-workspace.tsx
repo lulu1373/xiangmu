@@ -429,8 +429,6 @@ export function ProjectWorkspace({
       completedDate: String(form.get("completedDate") ?? ""),
       overallProgress: String(form.get("overallProgress") ?? ""),
       department: String(form.get("department") ?? ""),
-      budget: String(form.get("budget") ?? ""),
-      actualSpend: String(form.get("actualSpend") ?? ""),
       riskLevel: String(form.get("riskLevel") ?? projectState.riskLevel),
       milestone: String(form.get("milestone") ?? ""),
       documentLink: String(form.get("documentLink") ?? ""),
@@ -702,12 +700,10 @@ function ProjectOverviewSection({
           <OverviewMetric label="总体进度" value={`${project.overallProgress}%`} />
           <OverviewMetric label="所属部门" value={project.department || "未填写"} />
         </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <OverviewMetric label="开始日期" value={project.startDate || "-"} />
           <OverviewMetric label="预计完成" value={project.targetDate || "-"} />
           <OverviewMetric label="实际完成" value={project.completedDate || "-"} />
-          <OverviewMetric label="项目预算" value={project.budget === null ? "-" : String(project.budget)} />
-          <OverviewMetric label="实际花费" value={project.actualSpend === null ? "-" : String(project.actualSpend)} />
           <OverviewMetric label="项目状态" value={project.summaryStatus} />
         </div>
         <div className="mt-4 grid gap-3 xl:grid-cols-2">
@@ -836,16 +832,8 @@ function ProjectOverviewSection({
             </label>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-3">
             <label className="field">
-              <span>项目预算</span>
-              <input className="input" name="budget" type="number" min="0" step="1" defaultValue={project.budget ?? ""} />
-            </label>
-            <label className="field">
-              <span>实际花费</span>
-              <input className="input" name="actualSpend" type="number" min="0" step="1" defaultValue={project.actualSpend ?? ""} />
-            </label>
-            <label className="field md:col-span-2 xl:col-span-2">
               <span>相关文档</span>
               <input className="input" name="documentLink" defaultValue={project.documentLink} placeholder="https://..." />
             </label>
